@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "..\\python_backend"
+		},
+		{
+			"path": "..\\sveltekit_frontend"
+		}
+	],
+	"settings": {}
+}
