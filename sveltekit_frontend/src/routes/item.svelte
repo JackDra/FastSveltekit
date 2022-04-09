@@ -1,5 +1,6 @@
 <script lang="ts">
-	export let item;
+	import type { Item } from '$lib/apiTypes/items';
+	export let item: Item;
 </script>
 
 <main>
