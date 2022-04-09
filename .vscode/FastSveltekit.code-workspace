@@ -10,5 +10,27 @@
 			"path": "..\\sveltekit_frontend"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.testing.pytestArgs": [
+			"python_backend"
+		],
+		"python.testing.unittestEnabled": false,
+		"python.testing.pytestEnabled": true,
+		"python.linting.flake8Enabled": false,
+		"python.linting.pylintEnabled": false,
+		"python.linting.enabled": true,
+		"[python]": {
+			"editor.formatOnPaste": false,
+			"editor.formatOnSaveMode": "file",
+			"editor.codeActionsOnSave": {
+				"source.organizeImports": true
+			}
+		},
+		"python.formatting.provider": "black",
+		"editor.formatOnSave": true,
+		"python.analysis.typeCheckingMode": "strict",
+		"cSpell.words": [
+			"pydantic"
+		]
+	}
 }

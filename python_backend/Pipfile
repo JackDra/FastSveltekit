@@ -4,7 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
+fastapi = {extras = ["all"], version = "*"}
+black = "*"
+isort = "*"
+pytest = "*"
+pydantic-to-typescript = "*"
 
 [dev-packages]
 
