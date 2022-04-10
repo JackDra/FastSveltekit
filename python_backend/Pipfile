@@ -9,6 +9,8 @@ black = "*"
 isort = "*"
 pytest = "*"
 pydantic-to-typescript = "*"
+fastapi-utils = "*"
+python-backend = {editable = true, path = "."}
 
 [dev-packages]
 

@@ -1,16 +1,20 @@
-# type: ignore [no-redef]
-import os
+import click
 
-import models
-from pydantic2ts import generate_typescript_defs
+from build_svelte_types.generators.typescript_gen import gen_typescript_defines
 
-for ifile in os.listdir(os.path.dirname(models.__file__)):
-    model_name, _ = os.path.splitext(os.path.basename(ifile))
-    if model_name == "__init__":
-        continue
 
-    generate_typescript_defs(
-        f"models.{model_name}",
-        f"../sveltekit_frontend/src/lib/apiTypes/{model_name}.ts",
-        json2ts_cmd="npm run json2ts",
-    )
+@click.group()
+def cli():
+    pass
+
+
+@cli.command(name="typescript")
+def gen_typescript():
+    """Generate the typescript interfaces for all models in
+    the models folder
+    """
+    gen_typescript_defines()
+
+
+if __name__ == "__main__":
+    cli()
