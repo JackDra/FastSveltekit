@@ -1,0 +1,11 @@
+import type { $$class_name } from '$lib/apiTypes/$$file_name';
+
+export async function get({ params }) {
+    const res = await fetch(`http://localhost:8000/$$file_name/${params.$$id}`);
+    const $$file_name: $$class_name = await res.json();
+    return {
+        body: {
+            $$file_name: $$file_name
+        }
+    };
+}

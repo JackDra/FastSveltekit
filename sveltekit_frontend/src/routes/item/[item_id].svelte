@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Item } from '$lib/apiTypes/items';
+	import type { Item } from '$lib/apiTypes/item';
 	export let item: Item;
 </script>
 

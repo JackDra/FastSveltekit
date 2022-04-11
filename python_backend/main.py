@@ -1,6 +1,6 @@
 from fastapi import APIRouter, FastAPI
 
-from routes.items import ItemRoutes
+from routes.item import ItemRoutes
 
 
 def main() -> FastAPI:
