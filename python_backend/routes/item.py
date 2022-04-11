@@ -8,6 +8,7 @@ from routes.base_route import BaseRoute
 
 class ItemRoutes(BaseRoute):
 
+    # Used for auto template generating
     data_model = Item
 
     def gen_get(self) -> Callable[[str], Coroutine[Any, Any, Item]]:

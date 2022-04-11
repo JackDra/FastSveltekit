@@ -1,33 +1,45 @@
 import inspect
 import os
-from string import Template
+import sys
 from typing import Callable
 
+from build_svelte_types.templates.svelte_template import SvelteTemplate
 from fastapi import APIRouter
+from routes.base_route import BaseRoute
 
 BACKEND = "http://localhost:8000/"
 
 GET_REQUEST_TEMPLATE = os.path.join(
-    os.path.dirname(__file__), "templates", "get_request.template"
+    os.path.dirname(__file__), "..", "templates", "get_request.template"
 )
 
 GET_SVELTE_TEMPLATE = os.path.join(
-    os.path.dirname(__file__), "templates", "get_svelte.template"
+    os.path.dirname(__file__), "..", "templates", "get_svelte.template"
 )
 
 SVELTE_ROUTES = os.path.join(
     os.path.dirname(__file__), "..", "..", "..", "sveltekit_frontend", "src", "routes"
 )
 
-
-class TSTemplate(Template):
-
-    delimiter = "$$"
+ROUTES_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "routes")
 
 
 def create_get_svelte_file(file_name: str, class_name: str, arg_id: str):
+    """Given a file name, class name and get request id, generate a
+    templated svelte file for a simple get request using slug
+
+    Parameters
+    ----------
+    file_name : str
+        Name of the file of the route. Typically lowercase
+    class_name : str
+        Name of the data class that the get request is getting.
+        Typically upper case version of file_name
+    arg_id : str
+        Unique identifier of the class to fetch the data for.
+    """
     with open(GET_SVELTE_TEMPLATE, "r") as f:
-        template = TSTemplate(f.read())
+        template = SvelteTemplate(f.read())
 
     replace_dict = {"file_name": file_name, "class_name": class_name}
     filled_template = template.safe_substitute(replace_dict)
@@ -40,8 +52,21 @@ def create_get_svelte_file(file_name: str, class_name: str, arg_id: str):
 
 
 def create_get_request_file(file_name: str, class_name: str, arg_id: str):
+    """Given a file name, class name and get request id, generate a
+    templated ts get fetch request file for a simple get request using slug
+
+    Parameters
+    ----------
+    file_name : str
+        Name of the file of the route. Typically lowercase
+    class_name : str
+        Name of the data class that the get request is getting.
+        Typically upper case version of file_name
+    arg_id : str
+        Unique identifier of the class to fetch the data for.
+    """
     with open(GET_REQUEST_TEMPLATE, "r") as f:
-        template = TSTemplate(f.read())
+        template = SvelteTemplate(f.read())
 
     replace_dict = {
         "file_name": file_name,
@@ -97,11 +122,17 @@ def get_api_type(function: Callable) -> str:
     return rest_type
 
 
-if __name__ == "__main__":
-    from routes.item import ItemRoutes
+def gen_svelte_files(route_class: type[BaseRoute]):
+    """Given a class derived from BaseRoute, generate all svelte
+    request and svelte files for the REST functions defined
 
+    Parameters
+    ----------
+    route_class : type[BaseRoute]
+        Route class to generate svelte files for
+    """
     mock_route = APIRouter()
-    item_routes = ItemRoutes(mock_route)
+    item_routes = route_class(mock_route)
 
     route_methods = {
         get_api_type(imethod): imethod
@@ -111,7 +142,40 @@ if __name__ == "__main__":
 
     if "get" in route_methods.keys():
         get_arg_name, get_arg_type = inspect_get_request(route_methods["get"])
-        file_path = inspect.getfile(ItemRoutes)
+        file_path = inspect.getfile(route_class)
         file_name, _ = os.path.splitext(os.path.basename(file_path))
-        create_get_request_file(file_name, ItemRoutes.data_model.__name__, get_arg_name)
-        create_get_svelte_file(file_name, ItemRoutes.data_model.__name__, get_arg_name)
+        os.makedirs(os.path.join(SVELTE_ROUTES, file_name), exist_ok=True)
+        create_get_request_file(
+            file_name, route_class.data_model.__name__, get_arg_name
+        )
+        create_get_svelte_file(file_name, route_class.data_model.__name__, get_arg_name)
+
+
+def get_all_classes() -> list[type[BaseRoute]]:
+    """Get all defined routes in the routes folder
+
+    Returns
+    -------
+    list[type[BaseRoute]]
+        Imported classes from all routes defined in the
+        routes folder
+    """
+    class_list = []
+    for py in [
+        f[:-3]
+        for f in os.listdir(ROUTES_PATH)
+        if f.endswith(".py") and f not in ["__init__.py", "base_route.py"]
+    ]:
+        mod = __import__(".".join(["routes", py]), fromlist=[py])
+        module_name = mod.__name__.split(".")[-1]
+        # Assumes class name is capitalized version of file name
+        # Appended with Routes
+        # E.g. item.py route has routes class ItemRoutes
+        class_list.append(getattr(mod, module_name.title() + "Routes"))
+    return class_list
+
+
+if __name__ == "__main__":
+
+    for iclass in get_all_classes():
+        gen_svelte_files(iclass)
