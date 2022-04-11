@@ -1,8 +1,11 @@
 # type: ignore [no-redef]
+import logging
 import os
 
 import models
 from pydantic2ts import generate_typescript_defs
+
+logger = logging.getLogger(__name__)
 
 # Where the model files are located that will be converted
 MODEL_DIR = os.path.dirname(models.__file__)
@@ -20,6 +23,7 @@ def gen_typescript_defines():
         if model_name.startswith("_"):
             continue
 
+        logger.info(f"Generating typescript defines file for {model_name}")
         generate_typescript_defs(
             f"models.{model_name}",
             f"{SVELTE_TYPE_DIR}/{model_name}.ts",

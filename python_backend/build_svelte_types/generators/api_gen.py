@@ -1,4 +1,5 @@
 import inspect
+import logging
 import os
 import sys
 from typing import Callable
@@ -6,6 +7,8 @@ from typing import Callable
 from build_svelte_types.templates.svelte_template import SvelteTemplate
 from fastapi import APIRouter
 from routes.base_route import BaseRoute
+
+logger = logging.getLogger(__name__)
 
 BACKEND = "http://localhost:8000/"
 
@@ -175,7 +178,12 @@ def get_all_classes() -> list[type[BaseRoute]]:
     return class_list
 
 
-if __name__ == "__main__":
-
+def gen_svelte():
+    """Scrape through all route classes and generate svelte files for them"""
     for iclass in get_all_classes():
+        logger.info(f"Generating svelte files for {iclass.__name__}")
         gen_svelte_files(iclass)
+
+
+if __name__ == "__main__":
+    gen_svelte()
