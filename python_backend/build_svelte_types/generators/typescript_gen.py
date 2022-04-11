@@ -17,7 +17,7 @@ def gen_typescript_defines():
     """
     for ifile in os.listdir(MODEL_DIR):
         model_name, _ = os.path.splitext(os.path.basename(ifile))
-        if model_name == "__init__":
+        if model_name.startswith("_"):
             continue
 
         generate_typescript_defs(
@@ -25,3 +25,7 @@ def gen_typescript_defines():
             f"{SVELTE_TYPE_DIR}/{model_name}.ts",
             json2ts_cmd="npm run json2ts",
         )
+
+
+if __name__ == "__main__":
+    gen_typescript_defines()
