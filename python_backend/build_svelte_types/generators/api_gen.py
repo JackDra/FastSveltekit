@@ -7,8 +7,12 @@ from fastapi import APIRouter
 
 BACKEND = "http://localhost:8000/"
 
-GET_TEMPLATE_FILE = os.path.join(
+GET_REQUEST_TEMPLATE = os.path.join(
     os.path.dirname(__file__), "templates", "get_request.template"
+)
+
+GET_SVELTE_TEMPLATE = os.path.join(
+    os.path.dirname(__file__), "templates", "get_svelte.template"
 )
 
 SVELTE_ROUTES = os.path.join(
@@ -21,19 +25,33 @@ class TSTemplate(Template):
     delimiter = "$$"
 
 
-def create_get_file(file_name: str, class_name: str, id: str):
-    with open(GET_TEMPLATE_FILE, "r") as f:
+def create_get_svelte_file(file_name: str, class_name: str, arg_id: str):
+    with open(GET_SVELTE_TEMPLATE, "r") as f:
+        template = TSTemplate(f.read())
+
+    replace_dict = {"file_name": file_name, "class_name": class_name}
+    filled_template = template.safe_substitute(replace_dict)
+
+    # svelte_frontend/src/routes/{file_name}/[{id}].ts
+    output_file = os.path.join(SVELTE_ROUTES, file_name, f"[{arg_id}].svelte")
+
+    with open(output_file, "w") as f:
+        f.write(filled_template)
+
+
+def create_get_request_file(file_name: str, class_name: str, arg_id: str):
+    with open(GET_REQUEST_TEMPLATE, "r") as f:
         template = TSTemplate(f.read())
 
     replace_dict = {
         "file_name": file_name,
         "class_name": class_name,
-        "id": id,
+        "arg_id": arg_id,
     }
     filled_template = template.safe_substitute(replace_dict)
 
     # svelte_frontend/src/routes/{file_name}/[{id}].ts
-    output_file = os.path.join(SVELTE_ROUTES, file_name, f"[{id}].ts")
+    output_file = os.path.join(SVELTE_ROUTES, file_name, f"[{arg_id}].ts")
 
     with open(output_file, "w") as f:
         f.write(filled_template)
@@ -95,4 +113,5 @@ if __name__ == "__main__":
         get_arg_name, get_arg_type = inspect_get_request(route_methods["get"])
         file_path = inspect.getfile(ItemRoutes)
         file_name, _ = os.path.splitext(os.path.basename(file_path))
-        create_get_file(file_name, ItemRoutes.data_model.__name__, get_arg_name)
+        create_get_request_file(file_name, ItemRoutes.data_model.__name__, get_arg_name)
+        create_get_svelte_file(file_name, ItemRoutes.data_model.__name__, get_arg_name)
