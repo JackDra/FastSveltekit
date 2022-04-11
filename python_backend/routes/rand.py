@@ -12,6 +12,8 @@ class RandRoutes(BaseRoute):
     # Used for auto template generating
     data_model = Rand
 
+    # gen_ and then the REST call (get, post, etc..) will be
+    # recognized by the auto doc generator
     def gen_get(self) -> Callable[[str], Coroutine[Any, Any, Rand]]:
         @self.router.get("/{rand_user}", tags=self.router.tags, response_model=Rand)
         async def create_rand(rand_user: str) -> Rand:
@@ -21,10 +23,3 @@ class RandRoutes(BaseRoute):
         # to generate this function
         create_rand._REST = True
         return create_rand
-
-    def generate_endpoints(self):
-        self.get_rand = self.gen_get()
-
-    @classmethod
-    def generate_routes(cls, app: FastAPI, prefix: str = "/rand"):
-        return super().generate_routes(app, prefix)

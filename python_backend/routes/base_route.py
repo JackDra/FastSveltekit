@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 
 from fastapi import APIRouter, FastAPI
@@ -14,12 +15,17 @@ class BaseRoute(ABC):
         self.router = router
         self.generate_endpoints()
 
-    @abstractmethod
     def generate_endpoints(self):
-        pass
+        if hasattr(self, "gen_get"):
+            self.get_fun = getattr(self, "gen_get")()
 
     @classmethod
-    def generate_routes(cls, app: FastAPI, prefix: str):
-        this_route = cls(APIRouter(prefix=prefix))
+    def generate_routes(cls, app: FastAPI, prefix: str | None = None):
+        if prefix is None:
+            prefix, _ = os.path.splitext(
+                os.path.basename(cls.__module__.split(".")[-1])
+            )
+            prefix = "/" + prefix
+        this_route = cls(APIRouter(prefix=prefix, tags=[prefix[1:]]))
         app.include_router(this_route.router)
         return this_route

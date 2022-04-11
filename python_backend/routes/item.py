@@ -20,10 +20,3 @@ class ItemRoutes(BaseRoute):
         # to generate this function
         create_item._REST = True
         return create_item
-
-    def generate_endpoints(self):
-        self.get_item = self.gen_get()
-
-    @classmethod
-    def generate_routes(cls, app: FastAPI, prefix: str = "/item"):
-        return super().generate_routes(app, prefix)
