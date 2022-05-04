@@ -17,6 +17,7 @@
     "@playwright/test": "next",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
+    "@types/plotly.js": "^1.54.20",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "eslint": "^7.32.0",
@@ -30,5 +31,9 @@
     "tslib": "^2.3.1",
     "typescript": "~4.6.2"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "d3": "^7.4.4",
+    "plotly.js-dist": "^2.12.0"
+  }
 }
