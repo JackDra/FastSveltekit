@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svelte-frontend
+  labels:
+    app: svelte-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svelte-frontend
+  template:
+    metadata:
+      labels:
+        app: svelte-frontend
+    spec:
+      containers:
+        - name: svelte-frontend
+          image: jackdra90/svelte_frontend
+          ports:
+            - containerPort: 3000
