@@ -8,4 +8,5 @@
 	{#each Object.entries(item) as [key, value]}
 		<p>{key}: {value}</p>
 	{/each}
+	<h1>I MADE A CHANGE TO THE APP</h1>
 </main>
