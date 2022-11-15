@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: svelte-frontend
-          image: jackdra90/svelte_frontend
+          image: jackdra90/svelte_frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fastapi-backend
-          image: jackdra90/fastapi_backend
+          image: jackdra90/fastapi_backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
