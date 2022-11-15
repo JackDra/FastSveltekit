@@ -41,6 +41,12 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Deploy All Services
+      - name: Deploying Backend Service
         run: |
-          sh kube_deploy_services.sh
+          kubectl apply -f python_backend/kube/deployment.yaml
+          kubectl apply -f python_backend/kube/service.yaml
+
+      - name: Deploying Frontend Service
+        run: |
+          kubectl apply -f sveltekit_frontend/kube/deployment.yaml
+          kubectl apply -f sveltekit_frontend/kube/service.yaml
