@@ -50,3 +50,10 @@ jobs:
         run: |
           kubectl apply -f sveltekit_frontend/kube/deployment.yaml
           kubectl apply -f sveltekit_frontend/kube/service.yaml
+
+      - name: Forcing Restart of Services
+        # This is required due to the fact I have no versioning
+        # It is not recommended to use :latest docker version
+        run: |
+          kubectl rollout restart deployment svelte-frontend
+          kubectl rollout restart deployment fastapi-backend
